@@ -1,3 +1,4 @@
+BeautifulSoup==3.2.1
 -e git+https://github.com/django/django.git@425d076d0c8cf7376a1478d118c58bcff5b1b74d#egg=Django-dev
 South==0.8.1
 distribute==0.6.34
