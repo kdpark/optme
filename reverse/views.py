@@ -16,11 +16,10 @@ def calculateAge(month, day, year):
 	return age
 
 def main(request):
-	br = mechanize.Browser()
+	
 
-	url = 'https://livingto100.com/'
-
-	# receive user's data
+	# receive user's data from DB
+	# be careful of sequence
 	dateMonth = ['6']
 	dateDay = ['10']
 	dateYear = ['1987']
@@ -31,8 +30,7 @@ def main(request):
 
 	# user's answer
 	# At the moment, Random variable!!
-
-
+	# Todo : Called from DB
 
 	# check all data are received successfully.
 
@@ -42,7 +40,11 @@ def main(request):
 	if age < 13 or age > 99:
 		assert "unsupported age"
 
-	br.open(url+'calculator')
+	# Target site
+	br = mechanize.Browser()
+	url = 'https://livingto100.com'
+
+	br.open(url+'/calculator')
 	br.form = list(br.forms())[0]
 	br.form['date[month]'] = dateMonth
 	br.form['date[day]'] = dateDay
@@ -58,57 +60,76 @@ def main(request):
 	# branch 4 - way
 	if age > 38:
 		if gender[0] == 'M':
-			# start/1
-			flag = 1
+			# /start/1
+			for x in range(1, 94, 2):
+				if x != 7 and x != 55:
+					#this is for normal radiocontrol and selectcontrol
+					ran = random.sample(br.form.find_control(str(x)).items, 1)
+					br.form[str(x)] = [ran[0].name] # warning of list
+				elif x==7:
+					#this is for checkbox control
+					br.form['7[23]'] = ['E']
+					# for until 7[45]
+				else:
+					#another checkbox control
+					br.form['55[401]'] = ['I']
+					# for until 55[410]
 		else:
-			# start/2
-			flag = 2
+			# /start/2
+			for x in range(2, 95, 2)+[95, 96, 97]:
+				if x != 8 and x != 56:
+					ran = random.sample(br.form.find_control(str(x)).items, 1)
+					br.form[str(x)] = [ran[0].name] # warning of list
+				elif x==8:
+					br.form['8[46]'] = ['E']
+					#for until 8[68]
+				else:
+					br.form['56[411]'] = ['I']
+					#for until 56[420]
 	else:
 		if gender[0] =='M':
-			# start/3 (99~205)
+			# /start/3 (99~205)
 			for x in range(99,206,2):
 				if x == 161:
-					br.form['161[1004]'] = ['B']
+					br.form['161[1000]'] = ['F']
+					#for until 161[1008]
 				else:
 					ran = random.sample(br.form.find_control(str(x)).items, 1)
 					br.form[str(x)] = [ran[0].name] # warning of list
 		else:
-			# start/4
-			flag = 4
+			# /start/4
+			for x in range(98, 207, 2):
+				if x == 160:
+					br.form['160[991]'] = ['F']
+					#for until 160[999]
+				else:
+					ran = random.sample(br.form.find_control(str(x)).items, 1)
+					br.form[str(x)] = [ran[0].name] # warning of list
+
 
 	br.submit()
+	# usage of mechanize
 	# len(br.form.find_control('190').items)
 	# br.form.find_control('190').items[0].name
 	# a = random.sample(br.form.find_control('190').items, 1)
 	# a[0].name
-	br.open(url+'users/sign_in')
+	
+	# Temporary login module to livingto100
+	br.open(url+'/users/sign_in')
 	br.form = list(br.forms())[0]
-	br.form['user[email]'] = 'lvnknlan@naver.com'
-	br.form['user[password]'] = '1121rbeh'
+	br.form['user[email]'] = 'optme@optme.com'
+	br.form['user[password]'] = 'redstar123'
 	submitLogin = br.submit()
-	# form value dictionary loading
+	
+	# Result Analysis start
 	soup = BeautifulSoup(submitLogin)
 	image_tags = soup.findAll('img')
 
 	resultAge = image_tags[2]['alt']
-	
+	try:
+		check = int(resultAge)
+		output = "Your calculated life expectancy is "+ resultAge
+	except ValueError, e:
+		output = "Something wrong with calculating"
 
-	""" login module for result
-	
-	"""
-	return HttpResponse("Your calculated life expectancy is "+ resultAge)
-
-"""
-def login(request):
-	param = {'user[email]':'lvnknlan@naver.com',
-	'user[password]' : '1121rbeh',
-	#('user[password_confirmation]', '123'),
-	'authenticity_token' : 'gWG7mqX3XzqnkaR1gJO9Fes9mbVZzEyYHWF8M1kW/ho='}
-	data = urllib.urlencode(param)
-	req = urllib2.Request('https://livingto100.com/users/sign_in', data)
-	req.add_header('Content-type', 'application/x-www-form-urlencoded')
-	result = urllib2.urlopen(req)
-	#result = urllib2.urlopen('https://livingto100.com/users/sign_in', data)
-	content = result.read()
-	return HttpResponse(content)
-	"""
+	return HttpResponse(output)
