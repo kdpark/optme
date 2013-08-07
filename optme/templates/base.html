@@ -9,7 +9,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- Bootstrap -->
 		
-		<link rel="stylesheet" href="{% static 'bootstrap3/css/bootstrap.min.css' %} ">
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
 		<style type="text/css">
 			body {
 		        padding-top: 70px;
@@ -19,9 +19,8 @@
 	</head>
 
 	<body>
-		<script src="http://code.jquery.com/jquery.js"></script>
-		
-		<script src="static/bootstrap3/js/bootstrap.min.js"> </script>
+		<script src="http://code.jquery.com/jquery.js"></script>		
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"> </script>
 	
 		<!-- top navbar-->
 		<div class = "navbar navbar-fixed-top">
@@ -35,7 +34,7 @@
 				<a class = "navbar-brand" href = "">Optimize Me</a>
 				<div class = "nav-collapse in collapse" style="height: 0px;">
 					<ul class = "nav navbar-nav">
-						<li class = ""><a href="#">Preboarding</a></li>
+						<li class = ""><a href="/calculator/">Preboarding</a></li>
 						<li class = ""><a href="#">Onboarding</a></li>
 						<li class = ""><a href="#">24hr food recall</a></li>
 					</ul>
@@ -51,7 +50,7 @@
 
 		<!-- main page-->
 		<div class = "container">
-		{% block contents%}
+		{% block content %}
 
 		{% endblock %}
 		</div>

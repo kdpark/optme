@@ -131,5 +131,6 @@ def main(request):
 		output = "Your calculated life expectancy is "+ resultAge
 	except ValueError, e:
 		output = "Something wrong with calculating"
-
-	return HttpResponse(output)
+	data = {}
+	data['output'] = output
+	return render_to_response('calc.html', data)
