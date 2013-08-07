@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'reverse',
+    's3_folder_storage',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -86,13 +87,25 @@ USE_L10N = True
 
 USE_TZ = True
 
+#AWS service
+DEFAULT_FILE_STORAGE = 's3_folder_storage.s3.DefaultStorage'
+DEFAULT_S3_PATH = 'media'
+STATICFILES_STORAGE = 's3_folder_storage.s3.StaticStorage'
+STATIC_S3_PATH = 'static'
+
+AWS_ACCESS_KEY_ID = 'AKIAITCAP33MHAFAP34A'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'kyle.practice.redstar.com'
+
+MEDIA_ROOT = '/%s/' % DEFAULT_S3_PATH
+MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
+STATIC_ROOT = '/%s/' % STATIC_S3_PATH
+STATIC_URL = '//s3.amazonaws.com/%s/static/' % AWS_STORAGE_BUCKET_NAME
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
-STATIC_ROOT = 'staticfiles'
-STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'static'),
-        os.path.join(BASE_DIR,'..', 'static'),
 )
