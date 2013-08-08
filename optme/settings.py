@@ -22,7 +22,23 @@ SECRET_KEY = '-*rs-1ggtd&v==2sawvw9^nucha!!cx0kqerrr3q3&1brpa0a@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+if 'DEPLOY' in os.environ and os.environ['DEPLOY'] == 'true':
+  DEPLOY = True  # only True if production (for mail settings and https)
+else:
+  DEPLOY = False
+
+# SECURITY WARNING: don't run with debug turned on in production!
+if 'DEBUG' in os.environ and os.environ['DEBUG'] == 'true':
+  DEBUG = True
+else:
+  DEBUG = False
+
+try:
+  from optme.settings_debug import *
+except Exception as e:
+  print e
+
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -36,8 +52,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'reverse',
+    'survey',
     's3_folder_storage',
+    'core',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -53,33 +70,18 @@ ROOT_URLCONF = 'optme.urls'
 
 WSGI_APPLICATION = 'optme.wsgi.application'
 
-TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__),'..', 'templates'),
-    os.path.join(os.path.dirname(__file__), 'templates'),
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-"""
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'US/Eastern'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -105,7 +107,25 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
+)
 
 STATICFILES_DIRS = (
         os.path.join(BASE_DIR, 'static'),
 )
+
+AUTH_USER_MODEL = 'core.EmailUser'
+
+# keep this at the bottom
+try:
+  from optme.settings_local import *
+  print "Imported local settings"
+except Exception as e:
+  print e
+
+
+

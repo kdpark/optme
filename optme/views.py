@@ -3,7 +3,3 @@ from django.template import RequestContext, Context, Template, loader
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-def home(request):
-	data = {}
-
-	return render_to_response('base.html', data)
